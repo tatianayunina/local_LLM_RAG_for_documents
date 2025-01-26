@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Assistant</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <header class="main-header">
+    </header>
+    <div class="chat-container">
+        <h1>Chat Assistant</h1>
+        <div id="chat-box"></div>
+        <textarea id="question-input" placeholder="Enter your question..."></textarea>
+        <button id="send-button">Send</button>
+    </div>
+    <footer>
+        <p>Copyright (c) 2025 Tatiana Yunina</p>
+    </footer>
+    <script>
+        document.getElementById("send-button").addEventListener("click", async () => {
+            const question = document.getElementById("question-input").value.trim();
+            if (!question) return; // If the question is empty, do not send it.
+
+            const chatBox = document.getElementById("chat-box");
+
+            // Display user's question
+            chatBox.innerHTML += `
+                <div class="chat-message user">
+                    <strong>You</strong>
+                    <span>${question}</span>
+                </div>
+            `;
+
+            // Clear the input field
+            document.getElementById("question-input").value = '';
+
+            try {
+                // Fetch response from the server
+                const response = await fetch("/ask", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ question })
+                });
+
+                const data = await response.json();
+
+                // Format and display assistant's response
+                const formattedAnswer = formatAnswer(data.answer);
+                chatBox.innerHTML += `
+                    <div class="chat-message assistant">
+                        <strong>Assistant</strong>
+                        <span>${formattedAnswer}</span>
+                    </div>
+                `;
+
+            } catch (error) {
+                // Handle fetch errors
+                chatBox.innerHTML += `
+                    <div class="chat-message assistant">
+                        <strong>Assistant</strong>
+                        <span>Sorry, I couldn't process your request. Please try again later.</span>
+                    </div>
+                `;
+            }
+
+            // Scroll to the latest message
+            chatBox.scrollTop = chatBox.scrollHeight;
+        });
+
+        // Function to format the assistant's response
+        function formatAnswer(answer) {
+            // Convert newlines into <br> tags
+            let formattedAnswer = answer.replace(/\n/g, "<br>");
+            
+            // Convert lists (if any) into HTML list format (unordered or ordered)
+            formattedAnswer = formattedAnswer.replace(/^\d+\./gm, "<ol><li>").replace(/\n/g, "</li>").replace(/<\/li><br><ol>/g, "</ol>");
+
+            // Close the last <li> tag for the last list item
+            formattedAnswer = formattedAnswer.replace(/<\/li><ol>/g, "</li>");
+
+            return formattedAnswer;
+        }
+    </script>
+</body>
+</html>
