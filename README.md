@@ -2,12 +2,12 @@
 
 Interact with your text documents using natural language processing! This tool supports local LLMs. Implemented output to a local server and a simple, pleasant interface.
 
-## 🚀 Features
+##  Features
 - Use AI to chat with any text documents
 - Support for local LLMs
 - Simple setup and usage
 
-## 🛠 Installation
+## Installation
 ```bash
 pip install -r requirements.txt
 ```
@@ -23,5 +23,5 @@ Download and run the model: https://ollama.com/library/llama3.2
 ## 📂 Data for Testing
 https://www.kaggle.com/datasets/manisha717/dataset-of-pdf-files
 
-### 📜 License
+### License
 This project is licensed under the MIT License. See the LICENSE file for details.
